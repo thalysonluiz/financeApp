@@ -6,39 +6,17 @@ import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, up
 import { child, getDatabase, onValue, push, ref, remove, set, update } from "firebase/database";
 
 import { firebase } from '../services/firebase/connection'
-import { useNavigation } from "@react-navigation/native";
 
 const auth = getAuth(firebase);
 const database = getDatabase(firebase);
 
-export function SignIn() {
-  const navigation = useNavigation();
-
+export function SignUp() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [nome, setNome] = useState('');
 
-  async function logar() {
-    await signInWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        alert(user.email)
-        setUser(user);
-        console.log(user)
-        setNome('');
-        setEmail('');
-        setSenha('');
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        alert('Ops, algo deu errado!')
-        return;
-
-        // ..
-      });
+  async function cadastrar() {
 
   }
 
@@ -55,7 +33,21 @@ export function SignIn() {
         marginBottom={15}
       />
       <Heading
-        marginBottom={5}>Entre na sua Conta</Heading>
+        marginBottom={5}>Crie sua Conta</Heading>
+      <Input w="90%"
+        InputLeftElement={
+          <Icon as={<MaterialIcons name="person" />}
+            size={5}
+            ml="2"
+            color="muted.400" />
+        }
+        placeholder="Nome"
+        marginBottom={5}
+        autoCorrect={false}
+        autoCapitalize="none"
+        value={nome}
+        onChangeText={text => setNome(text)}
+      />
       <Input w="90%"
         InputLeftElement={
           <Icon as={<MaterialIcons name="mail" />}
@@ -91,7 +83,7 @@ export function SignIn() {
       />
 
       <Pressable
-        onPress={logar}
+        onPress={cadastrar}
         bgColor="#34b67f"
         w="90%"
         justifyContent="center"
@@ -99,29 +91,13 @@ export function SignIn() {
         borderRadius={5}
         height={45}
         fontWeight="bold"
-        marginBottom={15}
       >
         <Text color="#FFF" fontSize={16}>
 
           Entrar
         </Text>
       </Pressable>
-      <Link _text={{
-        fontSize: "xl",
-        _light: {
-          color: "cyan.500"
-        },
-        color: "cyan.300"
-      }} onPress={() => navigation.navigate('SignUp')} isUnderlined _hover={{
-        _text: {
-          _light: {
-            color: "cyan.600"
-          },
-          color: "cyan.400"
-        }
-      }}>
-        Criar uma conta.
-      </Link>
+
     </Center>
   )
 }
