@@ -2,10 +2,42 @@ import { useState } from "react";
 import { Center, Heading, Icon, Image, Input, Pressable, Text, VStack } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { child, getDatabase, onValue, push, ref, remove, set, update } from "firebase/database";
+
+import { firebase } from '../services/firebase/connection'
+
+const auth = getAuth(firebase);
+const database = getDatabase(firebase);
+
 export function SignIn() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  async function logar() {
+    await signInWithEmailAndPassword(auth, email, senha)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        alert(user.email)
+        setUser(user);
+        console.log(user)
+        setNome('');
+        setEmail('');
+        setSenha('');
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        alert('Ops, algo deu errado!')
+        return;
+
+        // ..
+      });
+
+  }
 
   return (
     <Center
@@ -50,7 +82,7 @@ export function SignIn() {
       />
 
       <Pressable
-        onPress={() => setShow(!show)}
+        onPress={logar}
         bgColor="#34b67f"
         w="90%"
         justifyContent="center"
