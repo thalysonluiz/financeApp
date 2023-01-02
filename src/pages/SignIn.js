@@ -1,15 +1,13 @@
 import { useState } from "react";
-import { Center, Heading, Icon, Image, Input, Link, Pressable, Text, VStack } from "native-base";
+import { Center, Heading, Icon, Image, Input, Link, Pressable, Text } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { child, getDatabase, onValue, push, ref, remove, set, update } from "firebase/database";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import { firebase } from '../services/firebase/connection'
 import { useNavigation } from "@react-navigation/native";
 
 const auth = getAuth(firebase);
-const database = getDatabase(firebase);
 
 export function SignIn() {
   const navigation = useNavigation();
@@ -23,9 +21,6 @@ export function SignIn() {
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        alert(user.email)
-        setUser(user);
-        console.log(user)
         setNome('');
         setEmail('');
         setSenha('');
@@ -34,7 +29,6 @@ export function SignIn() {
         const errorCode = error.code;
         const errorMessage = error.message;
 
-        alert('Ops, algo deu errado!')
         return;
 
         // ..

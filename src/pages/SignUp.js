@@ -16,8 +16,58 @@ export function SignUp() {
   const [password, setPassword] = useState('');
   const [nome, setNome] = useState('');
 
-  async function cadastrar() {
+  async function novoUser(uid, novoNome) {
+    const newUserRef = child(ref(database, 'usuarios/'), uid);
+    //console.log(newUserRef.key);
+    await set(newUserRef, {
+      nome: novoNome
+    });
+  }
 
+  async function cadastrar() {
+    await createUserWithEmailAndPassword(auth, email, senha)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        const uid = user.uid;
+        setUser(user);
+
+        novoUser(uid, nome)
+        alert("Usuário Cadastrado com sucesso!")
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        if (errorCode === 'auth/weak-password') {
+          alert('Senha menor que 6 caracteres')
+          return;
+        }
+        if (errorCode === 'auth/invalid-email') {
+          alert('Email Inválido')
+          return;
+        }
+        else {
+          alert('Ops, algo deu errado!')
+          return;
+        }
+        // ..
+      });
+
+    await updateProfile(auth.currentUser, {
+      displayName: nome,
+      //photoURL: "https://example.com/jane-q-user/profile.jpg"
+    }).then(() => {
+      // Profile updated!
+
+    }).catch((error) => {
+      console.log(error);
+    });
+
+    //console.log(user)
+    setNome('');
+    setEmail('');
+    setSenha('');
   }
 
   return (
