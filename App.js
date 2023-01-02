@@ -1,23 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   Center,
   NativeBaseProvider,
   Text
 } from 'native-base';
+import 'react-native-gesture-handler';
+import { Routes } from './src/routes';
 
 export default function App() {
   return (
-    <NativeBaseProvider>
-      <StatusBar style="auto" />
-      <Center
-        _dark={{ bg: "blueGray.900" }}
-        _light={{ bg: "blueGray.50" }}
-        px={4}
-        flex={1}
-      >
-        <Text>Open up App.js to start working on your app!</Text>
-      </Center>
-    </NativeBaseProvider>
+    <NavigationContainer>
+
+      <NativeBaseProvider>
+        <StatusBar style="auto" />
+        <Routes />
+      </NativeBaseProvider>
+    </NavigationContainer>
   );
 }
 
