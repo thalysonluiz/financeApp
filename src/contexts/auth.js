@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { child, getDatabase, onValue, push, ref, remove, set, update } from "firebase/database";
 
@@ -11,6 +11,21 @@ export const AuthContext = createContext({});
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function loadStorage() {
+      try {
+        const jsonValue = await AsyncStorage.getItem('@Auth_user')
+        const user = jsonValue != null ? JSON.parse(jsonValue) : null;
+        setUser(user);
+
+      } catch (e) {
+        // error reading value
+      }
+    }
+
+    loadStorage();
+  }, [])
 
   async function novoUser(uid, novoNome) {
     const newUserRef = child(ref(database, 'users/'), uid);
@@ -37,6 +52,7 @@ export function AuthProvider({ children }) {
               email
             };
             setUser(data);
+            storageUser(data)
 
           })
         alert("Usuário Cadastrado com sucesso!")
@@ -90,6 +106,7 @@ export function AuthProvider({ children }) {
             email
           };
           setUser(dataUser);
+          storageUser(dataUser)
         }, {
           onlyOnce: true
         });
@@ -103,6 +120,15 @@ export function AuthProvider({ children }) {
         // ..
       });
 
+  }
+
+  async function storageUser(value) {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@Auth_user', jsonValue)
+    } catch (e) {
+      // saving error
+    }
   }
 
   return (
