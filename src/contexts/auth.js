@@ -19,10 +19,12 @@ export function AuthProvider({ children }) {
         const jsonValue = await AsyncStorage.getItem('@Auth_user')
         const user = jsonValue != null ? JSON.parse(jsonValue) : null;
         setUser(user);
-        setLoading(false);
 
       } catch (e) {
         // error reading value
+      }
+      finally {
+        setLoading(false);
       }
     }
 
