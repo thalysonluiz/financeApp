@@ -1,14 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Center, Heading, Icon, Image, Input, Link, Pressable, Text, VStack } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { AuthContext } from "../contexts/auth";
 
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { child, getDatabase, onValue, push, ref, remove, set, update } from "firebase/database";
-
-import { firebase } from '../services/firebase/connection'
-
-const auth = getAuth(firebase);
-const database = getDatabase(firebase);
 
 export function SignUp() {
   const [show, setShow] = useState(false);
@@ -16,59 +10,12 @@ export function SignUp() {
   const [password, setPassword] = useState('');
   const [nome, setNome] = useState('');
 
-  async function novoUser(uid, novoNome) {
-    const newUserRef = child(ref(database, 'usuarios/'), uid);
-    //console.log(newUserRef.key);
-    await set(newUserRef, {
-      nome: novoNome
-    });
+  const { sigUp } = useContext(AuthContext);
+
+  function handleSignUp() {
+    sigUp(email, password, nome);
   }
 
-  async function cadastrar() {
-    await createUserWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        const uid = user.uid;
-        setUser(user);
-
-        novoUser(uid, nome)
-        alert("Usuário Cadastrado com sucesso!")
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        if (errorCode === 'auth/weak-password') {
-          alert('Senha menor que 6 caracteres')
-          return;
-        }
-        if (errorCode === 'auth/invalid-email') {
-          alert('Email Inválido')
-          return;
-        }
-        else {
-          alert('Ops, algo deu errado!')
-          return;
-        }
-        // ..
-      });
-
-    await updateProfile(auth.currentUser, {
-      displayName: nome,
-      //photoURL: "https://example.com/jane-q-user/profile.jpg"
-    }).then(() => {
-      // Profile updated!
-
-    }).catch((error) => {
-      console.log(error);
-    });
-
-    //console.log(user)
-    setNome('');
-    setEmail('');
-    setSenha('');
-  }
 
   return (
     <Center
@@ -133,7 +80,7 @@ export function SignUp() {
       />
 
       <Pressable
-        onPress={cadastrar}
+        onPress={handleSignUp}
         bgColor="#34b67f"
         w="90%"
         justifyContent="center"
