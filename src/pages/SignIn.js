@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Center, Heading, Icon, Image, Input, Link, Pressable, Text } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -6,6 +6,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import { firebase } from '../services/firebase/connection'
 import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../contexts/auth";
 
 const auth = getAuth(firebase);
 
@@ -15,6 +16,8 @@ export function SignIn() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const { user } = useContext(AuthContext);
 
   async function logar() {
     await signInWithEmailAndPassword(auth, email, senha)
