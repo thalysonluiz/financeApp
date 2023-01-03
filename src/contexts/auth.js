@@ -11,6 +11,7 @@ export const AuthContext = createContext({});
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStorage() {
@@ -18,6 +19,7 @@ export function AuthProvider({ children }) {
         const jsonValue = await AsyncStorage.getItem('@Auth_user')
         const user = jsonValue != null ? JSON.parse(jsonValue) : null;
         setUser(user);
+        setLoading(false);
 
       } catch (e) {
         // error reading value
@@ -132,7 +134,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ signed: !!user, user, sigUp, signIn }}>
+    <AuthContext.Provider value={{ signed: !!user, user, sigUp, signIn, loading }}>
       {children}
     </AuthContext.Provider>
   )
