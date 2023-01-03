@@ -72,8 +72,41 @@ export function AuthProvider({ children }) {
 
   }
 
+  async function signIn(email, password) {
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        const uid = user.uid;
+
+        const usuariosRef = ref(database, 'users/' + uid);
+        onValue(usuariosRef, (snapshot) => {
+          const data = snapshot.val();
+          const name = data.name;
+
+          const dataUser = {
+            uid,
+            name,
+            email
+          };
+          setUser(dataUser);
+        }, {
+          onlyOnce: true
+        });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        return;
+
+        // ..
+      });
+
+  }
+
   return (
-    <AuthContext.Provider value={{ signed: !!user, user, sigUp }}>
+    <AuthContext.Provider value={{ signed: !!user, user, sigUp, signIn }}>
       {children}
     </AuthContext.Provider>
   )

@@ -2,13 +2,8 @@ import { useContext, useState } from "react";
 import { Center, Heading, Icon, Image, Input, Link, Pressable, Text } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
-import { firebase } from '../services/firebase/connection'
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../contexts/auth";
-
-const auth = getAuth(firebase);
 
 export function SignIn() {
   const navigation = useNavigation();
@@ -17,26 +12,10 @@ export function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { user } = useContext(AuthContext);
+  const { signIn } = useContext(AuthContext);
 
-  async function logar() {
-    await signInWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        setNome('');
-        setEmail('');
-        setSenha('');
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        return;
-
-        // ..
-      });
-
+  function handleSignIn() {
+    signIn(email, password);
   }
 
   return (
@@ -88,7 +67,7 @@ export function SignIn() {
       />
 
       <Pressable
-        onPress={logar}
+        onPress={handleSignIn}
         bgColor="#34b67f"
         w="90%"
         justifyContent="center"
