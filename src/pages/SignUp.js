@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Center, Heading, Icon, Image, Input, Link, Pressable, Text, VStack } from "native-base";
+import { Button, Center, Heading, Icon, Image, Input, Link, Pressable, Text, VStack } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { AuthContext } from "../contexts/auth";
 
@@ -10,16 +10,23 @@ export function SignUp() {
   const [password, setPassword] = useState('');
   const [nome, setNome] = useState('');
 
+  const [buttonLoading, setButtonLoading] = useState(false);
+
   const { sigUp } = useContext(AuthContext);
 
   function handleSignUp() {
-    sigUp(email, password, nome);
+    setButtonLoading(true);
+    sigUp(email, password, nome)
+      .catch((error) => {
+        setButtonLoading(false);
+      });
   }
 
 
   return (
     <Center
       flex={1}
+      bgColor="#0E0D20"
     >
 
       <Image
@@ -30,7 +37,10 @@ export function SignUp() {
         marginBottom={15}
       />
       <Heading
-        marginBottom={5}>Crie sua Conta</Heading>
+        marginBottom={5}
+        color="#FFF"
+      >
+        Crie sua Conta</Heading>
       <Input w="90%"
         InputLeftElement={
           <Icon as={<MaterialIcons name="person" />}
@@ -40,6 +50,7 @@ export function SignUp() {
         }
         placeholder="Nome"
         marginBottom={5}
+        color="#FFF"
         autoCorrect={false}
         autoCapitalize="none"
         value={nome}
@@ -54,6 +65,7 @@ export function SignUp() {
         }
         placeholder="Email"
         marginBottom={5}
+        color="#FFF"
         autoCorrect={false}
         autoCapitalize="none"
         value={email}
@@ -73,13 +85,14 @@ export function SignUp() {
           <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
         </Pressable>}
         placeholder="Senha"
+        color="#FFF"
         autoCorrect={false}
         autoCapitalize="none"
         value={password}
         onChangeText={text => setPassword(text)}
       />
 
-      <Pressable
+      <Button
         onPress={handleSignUp}
         bgColor="#34b67f"
         w="90%"
@@ -88,12 +101,12 @@ export function SignUp() {
         borderRadius={5}
         height={45}
         fontWeight="bold"
+        color="#FFF"
+        fontSize={16}
+        isLoading={buttonLoading}
       >
-        <Text color="#FFF" fontSize={16}>
-
-          Entrar
-        </Text>
-      </Pressable>
+        Cadastrar
+      </Button>
 
     </Center>
   )

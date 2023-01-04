@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Center, Heading, Icon, Image, Input, Link, Pressable, Text } from "native-base";
+import { Button, Center, Heading, Icon, Image, Input, Link, Pressable, Text } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { useNavigation } from "@react-navigation/native";
@@ -11,16 +11,22 @@ export function SignIn() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const { signIn } = useContext(AuthContext);
 
   function handleSignIn() {
-    signIn(email, password);
+    setButtonLoading(true);
+    signIn(email, password)
+      .catch((error) => {
+        setButtonLoading(false);
+      });
   }
 
   return (
     <Center
       flex={1}
+      bgColor="#0E0D20"
     >
 
       <Image
@@ -31,7 +37,11 @@ export function SignIn() {
         marginBottom={15}
       />
       <Heading
-        marginBottom={5}>Entre na sua Conta</Heading>
+        marginBottom={5}
+        color="#FFF"
+      >
+        Entre na sua Conta
+      </Heading>
       <Input w="90%"
         InputLeftElement={
           <Icon as={<MaterialIcons name="mail" />}
@@ -41,6 +51,7 @@ export function SignIn() {
         }
         placeholder="Email"
         marginBottom={5}
+        color="#FFF"
         autoCorrect={false}
         autoCapitalize="none"
         value={email}
@@ -60,13 +71,14 @@ export function SignIn() {
           <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
         </Pressable>}
         placeholder="Senha"
+        color="#FFF"
         autoCorrect={false}
         autoCapitalize="none"
         value={password}
         onChangeText={text => setPassword(text)}
       />
 
-      <Pressable
+      <Button
         onPress={handleSignIn}
         bgColor="#34b67f"
         w="90%"
@@ -76,12 +88,13 @@ export function SignIn() {
         height={45}
         fontWeight="bold"
         marginBottom={15}
+        color="#FFF"
+        fontSize={16}
+        isLoading={buttonLoading}
       >
-        <Text color="#FFF" fontSize={16}>
 
-          Entrar
-        </Text>
-      </Pressable>
+        Entrar
+      </Button>
       <Link _text={{
         fontSize: "xl",
         _light: {

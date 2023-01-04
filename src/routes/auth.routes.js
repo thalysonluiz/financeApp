@@ -19,11 +19,11 @@ export function AuthRoutes() {
         component={SignUp}
         options={{
           headerStyle: {
-            backgroundColor: '#FFF',
+            backgroundColor: '#0E0D20',
             borderBottomWidth: 1,
             borderBottomColor: '#34b67f'
           },
-          headerTintColor: '#0E0D20',
+          headerTintColor: '#FFF',
           headerBackTitleVisible: false,
           headerTitle: 'Voltar'
         }}

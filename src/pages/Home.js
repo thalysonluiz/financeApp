@@ -10,8 +10,13 @@ export function Home() {
   }
 
   return (
-    <Center>
-      <Text>Home</Text>
+    <Center
+      flex={1}
+      bgColor="#0E0D20"
+    >
+      <Text
+        color="#FFF"
+      >Home</Text>
       <Button onPress={handleSignOut}>Sair</Button>
     </Center>
   )
