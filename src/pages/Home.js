@@ -3,11 +3,6 @@ import { useContext } from "react";
 import { AuthContext } from "../contexts/auth";
 
 export function Home() {
-  const { signOutUser } = useContext(AuthContext);
-
-  function handleSignOut() {
-    signOutUser();
-  }
 
   return (
     <Center
@@ -17,7 +12,7 @@ export function Home() {
       <Text
         color="#FFF"
       >Home</Text>
-      <Button onPress={handleSignOut}>Sair</Button>
+
     </Center>
   )
 }
