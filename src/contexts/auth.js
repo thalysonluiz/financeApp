@@ -144,6 +144,11 @@ export function AuthProvider({ children }) {
       });
   }
 
+
+  async function removeDados(userId) {
+    await remove(ref(database, 'usuarios/' + userId));
+  }
+
   return (
     <AuthContext.Provider value={{ signed: !!user, user, loading, sigUp, signIn, signOutUser }}>
       {children}

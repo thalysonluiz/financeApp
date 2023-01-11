@@ -23,13 +23,16 @@ export function RecordItem({ item }) {
             borderRadius={5}
           >
             <HStack
-              color="#FFF"
               justifyContent='space-between'
               alignItems='center'
             >
               <Icon as={<MaterialIcons name={item.status == 'receita' ? "north" : "south"} />} size={3} mr="2" color="#FFF" />
 
-              {item.status}
+              <Text
+                color="#FFF"
+              >
+                {item.status}
+              </Text>
             </HStack>
           </Badge>
           <Text color="coolGray.900" _dark={{

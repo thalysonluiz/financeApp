@@ -1,12 +1,80 @@
 import { Button, CheckIcon, FormControl, Heading, Icon, Input, Select, Text, VStack } from "native-base";
 import { useState } from "react";
+import { Alert, Keyboard } from "react-native";
+import { format } from "date-fns"
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { getAuth } from "firebase/auth";
+import { child, getDatabase, onValue, push, ref, remove, set, update } from "firebase/database";
+
+import { firebase } from '../services/firebase/connection'
+import { useNavigation } from "@react-navigation/native";
+
+const auth = getAuth(firebase);
+const database = getDatabase(firebase);
+
+
 export function NewRecord() {
+  const navigation = useNavigation();
+
   const [valor, setValor] = useState('');
+  const [tipo, setTipo] = useState('receita');
+
 
   function handleRegistrar() {
+    Keyboard.dismiss();
+    if (isNaN(parseFloat(valor)) || tipo === null) {
+      alert('Preencha todos os campos!');
+      return;
+    }
 
+    /* Alert.alert(
+      'Confirmando dados',
+      `Tipo ${tipo} - Valor: ${parseFloat(valor)}`
+      [{
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Continuar',
+        onPress: () => handleAdd()
+      }]
+    ) */
+    handleAdd();
+  }
+
+  async function handleAdd() {
+    const uid = auth.currentUser.uid;
+
+    const newRecordRef = push(child(ref(database, 'records/'), uid));
+    //console.log(newRecordRef.key);
+    await set(newRecordRef, {
+      tipo,
+      valor: parseFloat(valor),
+      data: format(new Date(), 'dd/MM/yyyy')
+    });
+
+    const usuariosRef = ref(database, 'users/' + uid);
+    onValue(usuariosRef, (snapshot) => {
+      let balance = parseFloat(snapshot.val().balance);
+
+      tipo === 'despesa' ? balance -= parseFloat(valor) : balance += parseFloat(valor)
+
+      atualizaDados(uid, balance);
+    }, {
+      onlyOnce: true
+    });
+
+    Keyboard.dismiss();
+    setValor('');
+    navigation.navigate('Home');
+  }
+
+  async function atualizaDados(userId, balance) {
+    await update(ref(database, 'users/' + userId), {
+      balance
+    });
   }
 
   return (
@@ -36,6 +104,9 @@ export function NewRecord() {
         autoCapitalize="none"
         value={valor}
         onChangeText={text => setValor(text)}
+        keyboardType="numeric"
+        returnKeyType="next"
+        onSubmitEditing={() => Keyboard.dismiss()}
       />
 
       <Select
@@ -53,6 +124,9 @@ export function NewRecord() {
             ml="2"
             color="muted.400" />
         }
+        onValueChange={(value) => setTipo(value)}
+        selectedValue={tipo}
+        color="#FFF"
       >
         <Select.Item label="Receita" value="receita" />
         <Select.Item label="Despesa" value="despesa" />
