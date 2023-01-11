@@ -4,7 +4,7 @@ import { RecordItem } from "../components/RecordItem";
 import { AuthContext } from "../contexts/auth";
 import { firebase } from "../services/firebase/connection";
 
-import { getDatabase, onValue, ref } from "firebase/database";
+import { getDatabase, limitToLast, onValue, orderByChild, query, ref } from "firebase/database";
 
 
 const data = [{
@@ -54,34 +54,35 @@ export function Home() {
   }
 
   function listRecords() {
-    const recordsRef = ref(database, 'records/' + user.uid);
+    const recordsRef = query(ref(database, 'records/' + user.uid), orderByChild('data'), limitToLast(10));
     onValue(recordsRef, (snapshot) => {
       /* const data = snapshot.toJSON();
       console.log(data); */
+
       setRecords([])
       snapshot.forEach(item => {
-        const data = {
+        const list = {
           id: item.key,
           valor: item.val().valor,
           tipo: item.val().tipo,
           data: item.val().data
         }
 
-        /* setRecords(oldArray => [
+        setRecords(oldArray => [
           ...oldArray,
-          data
-        ].reverse()); */
-        console.log(data);
+          list
+        ]);
+        //console.log(list);
 
       })
     });
-    setLoading(false);
-    //console.log(records)
+
   }
 
   useEffect(() => {
     listUserBalance();
-    //listRecords()
+    listRecords();
+    setLoading(false);
   }, [])
 
   return (
@@ -106,7 +107,7 @@ export function Home() {
         fontSize={30}
         fontWeight='bold'
       >
-        R$ {userBalance.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') ?? 0}
+        R$ {userBalance.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') ?? 0}
       </Text>
       <Text
         color="#00b94a"
@@ -124,7 +125,7 @@ export function Home() {
         marginX={2}
       >
         <FlatList
-          data={data}
+          data={records}
           renderItem={({
             item
           }) => <RecordItem item={item} />}

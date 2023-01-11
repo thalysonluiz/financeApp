@@ -17,7 +17,7 @@ export function RecordItem({ item }) {
       <HStack justifyContent="space-between">
 
         <VStack>
-          <Badge colorScheme={item.status == 'receita' ? 'success' : 'error'}
+          <Badge colorScheme={item.tipo == 'receita' ? 'success' : 'error'}
             alignSelf="center"
             variant='solid'
             borderRadius={5}
@@ -26,12 +26,12 @@ export function RecordItem({ item }) {
               justifyContent='space-between'
               alignItems='center'
             >
-              <Icon as={<MaterialIcons name={item.status == 'receita' ? "north" : "south"} />} size={3} mr="2" color="#FFF" />
+              <Icon as={<MaterialIcons name={item.tipo == 'receita' ? "north" : "south"} />} size={3} mr="2" color="#FFF" />
 
               <Text
                 color="#FFF"
               >
-                {item.status}
+                {item.tipo}
               </Text>
             </HStack>
           </Badge>
@@ -49,7 +49,7 @@ export function RecordItem({ item }) {
         <Text fontSize="xs" _dark={{
           color: "warmGray.50"
         }} color="coolGray.800" alignSelf="flex-start">
-          {item.timeStamp}
+          {item.data}
         </Text>
       </HStack>
     </Box>
