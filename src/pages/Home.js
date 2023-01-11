@@ -1,7 +1,11 @@
 import { Box, Button, Center, FlatList, Text, VStack } from "native-base";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { RecordItem } from "../components/RecordItem";
 import { AuthContext } from "../contexts/auth";
+import { firebase } from "../services/firebase/connection";
+
+import { getDatabase, onValue, ref } from "firebase/database";
+
 
 const data = [{
   id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
@@ -30,8 +34,55 @@ const data = [{
   status: "receita"
 }];
 
+const database = getDatabase(firebase);
+
 export function Home() {
   const { user } = useContext(AuthContext);
+
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userBalance, setUserBalance] = useState(0)
+
+  function listUserBalance() {
+    const usuariosRef = ref(database, 'users/' + user.uid);
+    onValue(usuariosRef, (snapshot) => {
+      const balance = parseFloat(snapshot.val().balance);
+      setUserBalance(balance);
+    }, {
+      onlyOnce: true
+    });
+  }
+
+  function listRecords() {
+    const recordsRef = ref(database, 'records/' + user.uid);
+    onValue(recordsRef, (snapshot) => {
+      /* const data = snapshot.toJSON();
+      console.log(data); */
+      setRecords([])
+      snapshot.forEach(item => {
+        const data = {
+          id: item.key,
+          valor: item.val().valor,
+          tipo: item.val().tipo,
+          data: item.val().data
+        }
+
+        /* setRecords(oldArray => [
+          ...oldArray,
+          data
+        ].reverse()); */
+        console.log(data);
+
+      })
+    });
+    setLoading(false);
+    //console.log(records)
+  }
+
+  useEffect(() => {
+    listUserBalance();
+    //listRecords()
+  }, [])
 
   return (
     <VStack
@@ -46,7 +97,7 @@ export function Home() {
         fontSize={19}
         fontStyle="italic"
       >
-        {user && user.name}
+        {user.name ?? ''}
       </Text>
       <Text
         color="#FFF"
@@ -55,7 +106,7 @@ export function Home() {
         fontSize={30}
         fontWeight='bold'
       >
-        R$ {user && user.balance}
+        R$ {userBalance.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') ?? 0}
       </Text>
       <Text
         color="#00b94a"
